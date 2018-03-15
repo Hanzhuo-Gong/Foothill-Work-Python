@@ -1,0 +1,91 @@
+# -----------------------------------------------------------------------------
+# Name:    grader
+# Purpose: CS 21A Assignment # 2
+#
+# Author:  Hanzhuo Gong
+# Date:    1/19/2018
+# -----------------------------------------------------------------------------
+"""
+Calculate the average score and display the grade for students
+
+let user to enter his/her grades, if 4 or more grade is entered,
+the lowest will be dropped, and display the averages point, and
+the grade that the user get.
+"""
+
+# Use a constant for the minimum number of grades required for a drop
+MIN_NUM_TO_DROP = 4
+GRADE_A = 90.0
+GRADE_B = 80.0
+GRADE_C = 70.0
+GRADE_D = 60.0
+
+# Initialize a list for the grades to be entered by the user
+looping = True
+grade_list = []
+
+# Prompt the user for input repeatedly,
+while looping:
+    message = input('Please enter a grade:')
+
+    # Stop prompting when the user input is 'end'.
+    if message != 'end':
+        # convert grade to float
+        copy_message = float(message)
+        # adding each grade entered (as a number) to the grades list.
+        grade_list.append(copy_message)
+    else:
+        looping = False
+
+# if the list is empty
+if grade_list == []:
+    print('No grades entered')
+    exit()
+
+# Are there enough grades to drop the lowest one?
+if len(grade_list) >= MIN_NUM_TO_DROP:
+    print('The lowest grade dropped:', min(grade_list))
+    # If so, remove and print the lowest grade.
+    grade_list.remove(min(grade_list))
+
+# Use some list functions to compute and print the average numeric grade.
+average = sum(grade_list)/len(grade_list)
+average = round(average, 1)     # round up to one decimal
+print('Course Average:', average)
+
+# Compute and print the letter grade.
+if average >= GRADE_A:
+    print('Letter Grade:A')
+elif average >= GRADE_B:
+    print('Letter Grade:B')
+elif average >= GRADE_C:
+    print('Letter Grade:C')
+elif average >= GRADE_D:
+    print('Letter Grade:D')
+else:
+    print('Letter Grade:F')
+
+# Loop through the grades list and print them.
+print('Based on the following grades:')
+for grade in grade_list:
+    print(grade)
+    
+#------------------------------output----------------------
+'''
+Please enter a grade:85
+Please enter a grade:20
+Please enter a grade:30
+Please enter a grade:40
+Please enter a grade:60
+Please enter a grade:50
+Please enter a grade:end
+The lowest grade dropped: 20.0
+Course Average: 53.0
+Letter Grade:F
+Based on the following grades:
+85.0
+30.0
+40.0
+60.0
+50.0
+'''
