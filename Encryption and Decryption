@@ -1,0 +1,142 @@
+# -----------------------------------------------------------------------------
+# Name:        crypto
+# Purpose:     CS 21 assignment # 3
+#
+# Author:      Hanzhuo Gong
+# Date:        1/27/2018
+# -----------------------------------------------------------------------------
+"""
+This program encrypts and decrypts word from user input
+
+This program will encrypts "tan" after the word start with vowels, and
+move the first letter of the word to the last and add "est" for those
+words don't start with vowels
+"""
+
+
+def starts_with_vowel(word):
+    """
+    Check the word to see if the word start with a vowel letter.
+    """
+    if word[0] in ['a', 'e', 'i', 'o', 'u']:
+        return True
+    else:
+        return False
+    # return True if the word starts with a vowel and False otherwise
+
+
+def encrypt(word):
+    """
+    This function will encrypt the word that user entered
+    """
+    # encrypt a single word into the secret language
+    # call starts_with_vowel to decide which pattern to follow
+    if starts_with_vowel(word):
+        word += 'tan'
+        return word
+    else:
+        word = word[1:] + word[0] + "est"
+    # return a single word (encrypted)
+    return word
+
+
+def decrypt(word):
+    """
+    This function will decrypt the word that user entered
+    """
+    # If the word is not a valid word in the secret language, return None
+    if len(word) < 4:
+        word = 'None'
+    # decrypt a single word from the secret language
+    if word[-3:] == 'tan' and starts_with_vowel(word):
+        word = word[:-3]
+    elif not starts_with_vowel(word[-4]) and word[-3:] == 'est':
+        temp_letter = word[-4]
+        word = temp_letter + word[:-4]
+    else:
+        word = 'None'
+
+    return word
+
+
+def translate(text, mode):
+    """
+    This function translate the word to encrypt or decrypt
+    depending on user's choice
+    """
+    # Split the text into a list of words
+    split_input = text.split()
+    # Reverse the list
+    reverse_text = split_input[::-1]
+    # if mode is 'E' encrypt each of the words in the list
+    result = ''
+    # if mode is 'E' encrypt each of the words in the list
+    if mode == 'E':
+        for words in reverse_text:
+            result += encrypt(words) + ' '
+    # if mode id 'D' decrypt each word in the list
+    if mode == 'D':
+        # Build a new list with these translated words
+        for word in reverse_text:
+            # join the list of reversed translated words into a single string
+            result += decrypt(word) + ' '
+    # and return it
+    return result
+
+
+def choose_mode():
+    """
+    This function gives an option for user to choice from encrypt or
+    decrypt the word
+    """
+    looping = True
+    while looping:
+        # Prompt the user for input repeatedly until they enter 'E' or 'D'.
+        choice = input('Please type E to encrypt or D to decrypt a message:')
+        # Return the user's choice.
+        if choice == 'E' or choice == 'D':
+            looping = False
+            return choice
+        else:
+            print('Invalid choice')
+
+
+def main():
+    # Get the user choice 'E' or 'D' and save it in a variable.
+    user_choice = choose_mode()
+    # Prompt the user for the message to be translated.
+    user_input = input('Please enter your message:')
+    # Translate the message by calling translate - save result.
+    display_result = translate(user_input, user_choice)
+    # Print the result - or 'Invalid message' if applicable.
+    if display_result[0:4] == 'None':
+        print('Invalid message')
+    else:
+        print(display_result)
+
+
+if __name__ == '__main__':
+    main()
+    
+#------------------------------------------output--------------------------
+'''
+Please type E to encrypt or D to decrypt a message:D
+Please enter your message:i
+Invalid message
+
+Please type E to encrypt or D to decrypt a message:E
+Please enter your message:simple     is better than complex
+omplexcest hantest etterbest istan implesest 
+
+Please type E to encrypt or D to decrypt a message:i
+Invalid choice
+Please type E to encrypt or D to decrypt a message:e
+Invalid choice
+Please type E to encrypt or D to decrypt a message:D
+Please enter your message:this is fun
+Invalid message
+
+Please type E to encrypt or D to decrypt a message:D
+Please enter your message:omplexcest hantest etterbest istan implesest
+simple is better than complex
+'''
