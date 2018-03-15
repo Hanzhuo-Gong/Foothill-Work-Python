@@ -1,0 +1,111 @@
+# -----------------------------------------------------------------------------
+# Name:        spam
+# Purpose:     CS21 assignment 4
+#
+# Author:      Hanzhuo Gong
+# Date:        2/3/2018
+# -----------------------------------------------------------------------------
+"""
+this program will determine whether an email is spam email
+
+The program will use spam indicator to compare with the email word and
+determine if the email is a spam email or not.
+"""
+
+import sys
+SPAM_WORDS = {'opportunity', 'inheritance', 'money', 'rich', 'dictator',
+              'discount', 'save', 'free', 'offer', 'credit',
+              'loan', 'winner', 'warranty', 'lifetime', 'medicine',
+              'claim', 'now', 'urgent', 'expire', 'top',
+              'plan', 'prize', 'congratulations', 'help', 'widow'}
+
+SPAM_THRESHOLD = 0.10
+
+
+def spam_indicator(text):
+    """
+    This function will calculate the spam indicator
+    """
+    # Translate the sentence to all lower letter
+    translate_lower = text.lower()
+
+    # Total unique words in the message
+    set_input = set(translate_lower.split())
+    set_input_length = len(set_input)
+    if set_input_length == 0:
+        print('No Empty String Please')
+        sys.exit()
+
+    # Find the common words and get the length of that
+    check_spam = len(set_input & SPAM_WORDS)
+
+    # Calculate the spam indicator
+    result = check_spam / set_input_length
+    result_format = f'{result:.2f}'
+
+    # This function returns the spam indicator rounded to two decimals
+    return result_format
+
+
+def classify(indicator):
+    """
+    Check if the email is belong to spam or ham
+    """
+    # This function prints the spam classification
+    indicator_float = float(indicator)
+    if indicator_float > SPAM_THRESHOLD:
+        classify_result = 'SPAM'
+    else:
+        classify_result = 'HAM'
+    return classify_result
+
+
+def get_input():
+    """
+    The function will accept the message
+    """
+    # Prompt the user for input and return the input
+    user_input = input('Please enter your message:')
+    return user_input
+
+
+def main():
+    # Get the user input and save it in a variable
+    message = get_input()
+    # Call spam_indicator to compute the spam indicator and save it
+    indicator_result = spam_indicator(message)
+    # Print the spam_indicator
+    print('SPAM indicator:', indicator_result)
+    # Call classify to print the classification
+    print('This message is:', classify(indicator_result))
+
+
+if __name__ == '__main__':
+    main()
+    
+#-------------------------------------output-----------------------------
+'''
+Please enter your message:The widow of a deposed dictator wants your help in getting his money out of the country
+SPAM indicator: 0.27
+This message is: SPAM
+
+Please enter your message:I got a new job offer today.  It looks good.  Are you free for lunch tomorrow?  We can meet downtown at noon.
+SPAM indicator: 0.09
+This message is: HAM
+
+Please enter your message:Do not miss out on this once in a lifetime OPPORTUNITY call NOW
+SPAM indicator: 0.23
+This message is: SPAM
+
+Please enter your message:It is urgent that you call us immediately  yada yada yada yada yada yada
+SPAM indicator: 0.11
+This message is: SPAM
+
+Please enter your message:Congratulations on your new job!  I hope you like it.
+SPAM indicator: 0.10
+This message is: HAM
+
+Please enter your message:you were selected to have the opportunity to win the highest PRIZE! become RICH today! CALL NOW to get your MONEY!
+SPAM indicator: 0.17
+This message is: SPAM 
+'''
