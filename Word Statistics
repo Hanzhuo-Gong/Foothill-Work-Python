@@ -1,0 +1,113 @@
+# -----------------------------------------------------------------------------
+# Name:        wordstats
+# Purpose:     CS21A assignment 5
+#
+# Author:      Hanzhuo Gong
+# Date:        02/11/18
+# -----------------------------------------------------------------------------
+"""
+This program read a file and counts the word
+
+The program will read a file and return a longest word appear
+in the file ,counts how many times that the words appear, and
+returns the most five common words appear in the file.
+"""
+import string
+import sys
+import os
+# The following imports are needed for the draw_cloud function.
+import tkinter
+import tkinter.font
+import random
+
+DEFAULT_OUTPUT_NAME = 'out.txt'
+DEFAULT_WORD_COUNT = 1
+
+
+def count_words(filename):
+    """
+    This function will count how many times the word appears
+    
+    Parameter:
+    filename: the file choose to read
+    Return: letter_count for the result of word count
+    """
+    # build and return the dictionary for the given filename
+    word_count = {}  # initialize the dictionary
+    with open(filename, 'r', encoding='utf-8') as file:
+        # check if the file is empty
+        if os.stat(filename).st_size == 0:
+            print('No empty file please')
+            sys.exit()
+        for line in file:
+            line = line.lower()  # convert the line to lower case
+            for word in line.split():  # then split it into words
+                # take out leading and trailing special characters
+                word = word.strip(string.punctuation + string.digits)
+                if word:  # if word is not an empty string
+                    if word in word_count:
+                        word_count[word] += 1
+                    else:
+                        word_count[word] = DEFAULT_WORD_COUNT
+
+    return word_count
+
+
+def report(word_dict):
+    """
+    This function will report the result
+
+    No return value
+    """
+    # report on various statistics based on the given word count dictionary
+    print('The longest word is:', max(word_dict, key=len))
+    # print the most five common words
+    print('The 5 most common words are:')
+    sort_by_count = sorted(word_dict, key=word_dict.get, reverse=True)
+    for word in sort_by_count[:5]:
+        print(f'{word}: {word_dict[word]}')
+    # copy the output into out.txt file
+    with open(DEFAULT_OUTPUT_NAME, 'w', encoding='utf-8') as file:
+        file.write("The words sorted alphabetically:\n")
+        for word in sorted(word_dict):  # print letters in alphabetical order
+            file.write(f'{word}:{word_dict[word]}\n')
+
+
+def user_input():
+    """
+    This function will let user enter the file name
+
+    Return: the string of user input
+    """
+    file_name = input("Please enter a file name:")
+    return file_name
+
+
+def main():
+    # get the input filename and save it in a variable
+    open_file_name = user_input()
+    # call count_words to build the dictionary for the given file
+    # save the dictionary in the variable word_count
+    word_count = count_words(open_file_name)
+    # call report to report on the contents of the dictionary word_count
+    report(word_count)
+
+
+# If you want to generate a word cloud, uncomment the line below.
+# draw_cloud(word_count)
+
+
+if __name__ == '__main__':
+    main()
+
+#--------------------------------------output---------------------------
+'''
+Please enter a file name:pride.txt
+The longest word is: disinterestedness
+The 5 most common words are:
+the: 4332
+to: 4138
+of: 3612
+and: 3580
+her: 2225 
+'''
