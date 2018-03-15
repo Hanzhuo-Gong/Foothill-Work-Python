@@ -1,0 +1,355 @@
+# ---------------------------------------------------------------------------
+# Name:       robot
+# Purpose:    class definition for robots
+#
+# Author:     Hanzhuo Gong
+# Date:       2/25/18
+# ---------------------------------------------------------------------------
+
+"""
+This program will display a robot in the maze
+
+The program will display a robot in the maze, and we will move the robot
+from the list
+"""
+import tkinter
+
+
+class Robot(object):
+    """
+    Enter the class docstring here
+
+    Arguments:
+    name(string): name of the robot
+    color(string): color of the robot
+    row(int):  which row the robot position in
+    column(int): which column the robot position in
+
+    Attributes:
+    name(string): name of the robot
+    color(string): color of the robot
+    row(int):  which row the robot position in
+    column(int): which column the robot position in
+    battery(int): battery remain in the robot
+    """
+
+    # class variable used by the show method
+    unit_size = 60
+
+    # Class variable describing the maze
+    # False represents an obstacle, True represents open space
+    maze = [[True, True, False, True, True, True, False, True, True, True],
+            [True, True, False, True, True, True, False, True, True, True],
+            [True, False, True, True, True, True, False, True, True, True],
+            [True, True, True, True, True, True, True, True, False, True],
+            [True, True, True, True, True, True, True, True, False, True],
+            [True, True, True, True, True, True, True, True, True, True],
+            [True, False, False, False, False, True, True, True, True, True],
+            [True, True, False, True, True, True, True, True, False, True],
+            [True, False, True, True, True, True, True, True, False, True],
+            [True, True, True, True, True, True, True, True, False, True]]
+
+    maze_size = len(maze)
+    # class variable to represent a full charge
+    # A robot with a fully charged battery can take up to 20 steps
+    full = 20
+
+    def __init__(self,  name, color, row=0, column=0):
+
+        self.name = name
+        self.color = color
+        self.row = row
+        self.column = column
+        self.battery = self.full
+
+    def __str__(self):
+        """
+        display the string robot lose in the maze
+
+        Parameter: None
+        Return: the string to display that
+        """
+        return f'{self.name} is a {self.color} robot lost in the maze'
+
+    def __gt__(self, other):
+        """
+        compare the battery between two robot
+        Parameter:
+        other: second object robot to compare with
+        Return: the result for comparison
+        """
+        result = self.battery > other.battery
+        return result
+
+    def recharge(self):
+        """
+        This method will recharge the battery to full
+
+        Parameter: None
+        Return: None
+        """
+        self.battery = self.full            # May change later
+
+    def one_step_forward(self):
+        """
+        if robot have battery, robot will move 1 row up
+
+        Parameter: None
+        Return: None
+        """
+        if self.battery:
+            if not self.row == self.maze_size - 1:
+                if self.maze[self.row+1][self.column]:
+                    self.row += 1
+                    self.battery -= 1
+
+    def one_step_back(self):
+        """
+        if robot have battery, robot will move 1 row down
+
+        Parameter: None
+        Return: None
+        """
+        if self.battery:
+            if not self.row == 0:
+                if self.maze[self.row-1][self.column]:
+                    self.row -= 1
+                    self.battery -= 1
+
+    def one_step_right(self):
+        """
+        if robot have battery, robot will move 1 column up
+
+        Parameter: None
+        Return: None
+        """
+        if self.battery:
+            if self.battery:
+                if not self.column == self.maze_size - 1:
+                    if self.maze[self.row][self.column + 1]:
+                        self.column += 1
+                        self.battery -= 1
+
+    def one_step_left(self):
+        """
+        if robot have battery, robot will move 1 column down
+
+        Parameter: None
+        Return: None
+        """
+        if self.battery:
+            if not self.column == 0:
+                if self.maze[self.row][self.column - 1]:
+                    self.column -= 1
+                    self.battery -= 1
+
+    def forward(self, steps):
+        """
+        if robot have battery, robot will move steps row up
+
+        Parameter:
+        steps:find out how many steps want to move to certain direction
+        Return: None
+        """
+        for moves in range(0, steps):
+            self.one_step_forward()
+
+    def backward(self, steps):
+        """
+        if robot have battery, robot will move steps row down
+
+        Parameter:
+        steps:find out how many steps want to move to certain direction
+        Return: None
+        """
+        for moves in range(0, steps):
+            self.one_step_back()
+
+    def right(self, steps):
+        """
+        if robot have battery, robot will move steps column up
+
+        Parameter:
+        steps:find out how many steps want to move to certain direction
+        Return: None
+        """
+        for moves in range(0, steps):
+            self.one_step_right()
+
+    def left(self, steps):
+        """
+        if robot have battery, robot will move steps column down
+
+        Parameter:
+        steps:find out how many steps want to move to certain direction
+        Return: None
+        """
+        for moves in range(0, steps):
+            self.one_step_left()
+
+    # The method below has been written for you
+    # You can use it when testing your class
+
+    def show(self):
+        """
+        Draw a graphical representation of the robot in the maze.
+
+        The robot's position and color are shown.
+        The color is assumed to be one of the colors recognized by tkinter
+        (https://www.tcl.tk/man/tcl8.4/TkCmd/colors.htm)
+        If the robot's battery is empty, the robot is shown in a
+        horizontal position. Otherwise the robot is shown in an upright
+        position.
+        The obstacles in the maze are shown in red.
+
+        Parameter: None
+        Return: None
+        """
+        root = tkinter.Tk()
+        root.title(self.name + ' in the Maze')
+        canvas = tkinter.Canvas(root, background='light green',
+                                width=self.unit_size * self.maze_size,
+                                height=self.unit_size * self.maze_size)
+        canvas.grid()
+
+        # draw a representation of the robot in the maze
+        if self.battery:
+            upper_x = self.column * self.unit_size + self.unit_size / 4
+            upper_y = self.row * self.unit_size
+            lower_x = upper_x + self.unit_size / 2
+            lower_y = upper_y + self.unit_size
+            eye_x = lower_x - 3 * self.unit_size / 20
+            eye_y = upper_y + self.unit_size / 10
+
+        else:  # the robot ran out of battery
+            upper_x = self.column * self.unit_size
+            upper_y = self.row * self.unit_size + self.unit_size / 2
+            lower_x = upper_x + self.unit_size
+            lower_y = upper_y + self.unit_size / 2
+            eye_x = lower_x - 9 * self.unit_size / 10
+            eye_y = lower_y - 3 * self.unit_size / 20
+
+        rectangle = canvas.create_rectangle(upper_x,
+                                            upper_y,
+                                            lower_x,
+                                            lower_y,
+                                            fill=self.color)
+        # draw the robot's eyes
+        canvas.create_oval(upper_x + self.unit_size / 10,
+                           upper_y + self.unit_size / 10,
+                           upper_x + 3 * self.unit_size / 20,
+                           upper_y + 3 * self.unit_size / 20,
+                           fill='black')
+        canvas.create_oval(eye_x,
+                           eye_y,
+                           eye_x + self.unit_size / 20,
+                           eye_y + self.unit_size / 20,
+                           fill='black')
+        # draw the obstacles in the maze
+        for row in range(self.maze_size):
+            for col in range(self.maze_size):
+                if not self.maze[row][col]:
+                    canvas.create_rectangle(col * self.unit_size,
+                                            row * self.unit_size,
+                                            (col + 1) * self.unit_size,
+                                            (row + 1) * self.unit_size,
+                                            fill='red')
+        for row in range(self.maze_size):
+            canvas.create_line(0,
+                               row * self.unit_size,
+                               self.maze_size * self.unit_size,
+                               row * self.unit_size)
+        for col in range(self.maze_size):
+            canvas.create_line(col * self.unit_size,
+                               0,
+                               col * self.unit_size,
+                               self.maze_size * self.unit_size)
+        root.mainloop()
+
+
+# Enter you UnderwaterRobot Class definition below
+class UnderwaterRobot(Robot):
+    """
+    Robot dive to the water
+
+    Argument:
+    depth(int): how depth the robot dive to
+    name(string): name of the robot
+    color(string): color of the robot
+    row(int): which row the robot position in
+    column(int): which column the robot position in
+
+    Attributes:
+    name(string): name of the robot
+    color(string): color of the robot
+    row(int):  which row the robot position in
+    column(int): which column the robot position in
+    depth(int): how depth the robot dive to
+    battery(int): battery remain in the robot
+    """
+
+    def __init__(self, name, color, depth, row=0, column=0):
+        self.depth = depth
+        super().__init__(name, color, row, column)
+
+    def __str__(self):
+        """
+        Display the string for robot under the water
+
+        Return: string that robot dive to water
+        """
+
+        return f'{self.name} is a {self.color} robot diving under water'
+
+    def dive(self, distance):
+        """
+
+        Parameter:
+        distance: find out how deep the robot dive
+        Return: no return
+        """
+        self.depth += distance
+
+
+def main():
+
+    """
+    test_robot = Robot('test1', 'red')
+    my_robot = Robot('cool robot', 'yellow')
+    print(my_robot)
+    my_robot.forward(8)
+    my_robot.one_step_right()
+    my_robot.one_step_back()
+    my_robot.one_step_right()
+    my_robot.one_step_left()
+    my_robot.backward(2)
+    my_robot.right(7)
+    my_robot.recharge()
+    my_robot.right(6)
+    my_robot.forward(10)
+    print(my_robot.battery)
+    print(test_robot.__gt__(my_robot))
+    print(my_robot.__gt__(test_robot))
+    my_robot.show()
+
+    """
+    print('Test for robot underwater')
+    a_test_robot= UnderwaterRobot('waterRobot', 'gold', 4, 1, 3)
+    print(a_test_robot)
+    a_test_robot.one_step_right()
+    a_test_robot.dive(10)
+    a_test_robot.forward(4)
+    a_test_robot.right(10)
+    a_test_robot.forward(10)
+    a_test_robot.backward(20)
+    a_test_robot.recharge()
+    a_test_robot.backward(10)
+    print('depth is',a_test_robot.depth)
+    print('battery is',a_test_robot.battery)
+    a_test_robot.show()
+
+
+if __name__ == '__main__':
+    main()
+
+# no output, testing window will appear when debugging
