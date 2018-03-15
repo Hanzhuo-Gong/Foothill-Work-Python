@@ -1,0 +1,53 @@
+# -----------------------------------------------------------------------------
+# Name:        Sale Tax Calculator
+# Purpose:     Calculator the sale tax and total for three items
+#
+# Author:      Hanzhuo Gong
+# Date:        1/13/18
+# -----------------------------------------------------------------------------
+"""
+Calculate the tax and total price for three items with tax rate 9%
+
+Prompt the price of three items for user to enter
+Calculate the sale tax and the total for the user
+"""
+
+SALE_TAX = 9/100                   # Sale tax constant at rate: 9%
+
+# display message for user to input the first item
+item_1 = input('Please enter the price of first item $: ')
+price_1= float(item_1)             # Convert first item from string to number
+
+# display message for user to input the second item
+item_2 = input('Please enter the price of second item $: ')
+price_2 = float(item_2)            # Convert sec item from string to number
+
+# display message for user to input the third item
+item_3 = input ('Please enter the price of third item $: ')
+price_3 = float(item_3)            # Convert third item from string to number
+
+subtotal_amount = price_1 + price_2 + price_3  # Subtotal of three items
+tax_amount = subtotal_amount * SALE_TAX        # Total tax from subtotal
+total_amount = subtotal_amount + tax_amount    # Total price for three items
+
+subtotal = f'${subtotal_amount:.2f}'  # Format string for subtotal and $ sign
+total_tax= f'${tax_amount:.2f}'       # Format string for tax and $ sign
+total_price= f'${total_amount:.2f}'   # Format string for total and $ sign
+
+subtotal_output = f'SUBTOTAL:{subtotal:>13}'     # Subtotal output string
+total_tax_output = f'SALES TAX:{total_tax:>12}'  # Tax output string
+total_price_output = f'TOTAL:{total_price:>16}'  # Total output string
+
+print(subtotal_output)                 # Print out subtotal
+print(total_tax_output)                # Print out tax
+print(total_price_output)              # Print out price
+
+#------------------------------output----------------------------------
+'''
+Please enter the price of first item $: 1000
+Please enter the price of second item $: 230
+Please enter the price of third item $: 75.23
+SUBTOTAL:     $1305.23
+SALES TAX:     $117.47
+TOTAL:        $1422.70 
+'''
