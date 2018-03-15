@@ -1,0 +1,122 @@
+# -----------------------------------------------------------------------------
+# Name:        language
+# Purpose:     CS 21A Assignment 7
+#
+# Author:      Hanzhuo Gong
+# Date:        3/4/2018
+# -----------------------------------------------------------------------------
+"""
+The program will generate a random sentence
+
+This program will generate a tuple from a file, and generate the
+sentence from the dictionary
+
+"""
+import random
+import os
+import string
+import sys
+
+
+def learn(filename):
+    """
+    This function will create a tuple to learn the word from
+    the list
+
+    Parameter:
+    filename: the filename to read
+    Returns: a tuple list
+    """
+    dictionary_list = {}  # initialize the dictionary
+    previous = None
+    current = ''
+    store_first_word = ''
+    first_word = True
+    with open(filename, 'r', encoding='utf-8') as file:
+        # check if the file is empty
+        if os.stat(filename).st_size == 0:
+            print('No empty file please')
+            sys.exit()
+        for line in file:
+            line = line.lower()  # convert the line to lower case
+            for word in line.split():  # then split it into words
+                # take out leading and trailing special characters
+                word = word.strip(string.punctuation)
+                if word is '':
+                    continue
+                if first_word:
+                    current = word
+                    store_first_word = word
+                    dictionary_list[word] = []
+                    first_word = False
+                else:
+                    previous = current
+                    current = word
+
+                    if not word in dictionary_list.keys():
+                        dictionary_list[word] = []
+                    follower_list = dictionary_list[previous]
+                    follower_list.append(word)
+                    dictionary_list[previous] = follower_list
+
+        tuple_list = (store_first_word, dictionary_list)
+        return tuple_list
+
+
+def sentence_generator(filename, length=10):
+    """
+    This function will generate a random sentence with
+    random picked word.
+
+    Parameter:
+    filename: name of the file
+    length: default length is 10 if not set
+    Return:none
+    """
+    random.seed(1)  # Set the seed for the random generator - do not remove
+    copy_tuple = learn(filename)  # copy the tuple
+    copy_dictionary = copy_tuple[1]  # copy the dictionary
+    sorted_keys = sorted(copy_dictionary.keys())
+    while True:
+        random_string = ''
+        current_length = 0
+        # get the key from dictionary
+        random_key = random.choice(sorted_keys)
+        # add the key to the string
+        random_string += random_key + ' '
+        current_length += 1
+
+        while current_length < length:
+            # get the word from list
+            if len(copy_dictionary[random_key]) is 0:
+                random_list = copy_tuple[0]
+            else:
+                random_list = random.choice(copy_dictionary[random_key])
+            if current_length < length:
+                # add the word to the string
+                random_string += random_list + ' '
+                current_length += 1
+                random_key = random_list
+        yield random_string
+
+
+def main():
+    test = sentence_generator('pride.txt', 8)
+    print(next(test))
+    print(next(test))
+    print(next(test))
+    print(next(test))
+    print(next(test))
+
+
+if __name__ == '__main__':
+    main()
+    
+ #-----------------------------------output-------------------------------
+ '''
+ commonly anxious to him though she found him 
+silliest girls reached to go for i never 
+retaliate and wretched in my object the neighbourhood 
+giddiness of mr bennet's manor it entirely misunderstood 
+displeasure at its office of the sake forego 
+ '''
